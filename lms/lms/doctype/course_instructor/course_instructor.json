@@ -1,7 +1,8 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2022-02-07 11:39:59.998762",
+ "allow_import": 1,
+ "creation": "2022-02-07 12:39:59.998762",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",

@@ -16,15 +16,9 @@ def get_data(filters=None):
     summary = []
     query_filter = {}
     if filters:
-        query_filter = {
-            "course": filters.course
-        }
+        query_filter = {"course": filters.course}
 
-    memberships = frappe.get_all(
-                        "LMS Batch Membership",
-                        query_filter,
-                        ["name", "course", "member", "member_name", "progress"],
-                        order_by="course")
+    memberships = frappe.get_all("LMS Batch Membership", query_filter, ["name", "course", "member", "member_name", "progress"], order_by="course")
 
     for membership in memberships:
         summary.append(frappe._dict({
@@ -32,6 +26,7 @@ def get_data(filters=None):
             "course_name": frappe.db.get_value("LMS Course", membership.course, "title"),
             "member": membership.member,
             "member_name": membership.member_name,
+            "company": frappe.db.get_value("User", membership.member, "company"),
             "progress": cint(membership.progress)
         }))
 
@@ -63,6 +58,12 @@ def get_columns():
                     "fieldname": "member_name",
                     "fieldtype": "Data",
                     "label": _("Member Name"),
+                    "width": 150
+                },
+                {
+                    "fieldname": "company",
+                    "fieldtype": "Data",
+                    "label": _("Company"),
                     "width": 150
                 },
                 {

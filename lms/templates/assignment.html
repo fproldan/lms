@@ -1,10 +1,22 @@
 <div class="form-group">
-  <div class="d-flex">
-    <input class="btn btn-default btn-sm mr-3 attach-file" type="file" id="{{ id }}" accept="{{ accept }}" />
-    <div class="button is-secondary submit-work">Submit Work</div>
-    <div class="preview-work button is-default hide">
-      <a target="_blank"></a>
-      <div class="button is-secondary clear-work">Change</div>
-    </div>
-  </div>
+	<div class="">
+		<h2 class="mt-5 mb-8"> {{ _("Assignment") }} </h2>
+		<div class="my-3"> {{ _(question) }} </div>
+		<div class="alert alert-info small">
+			{{ _("Only files of type {0} will be accepted.").format(file_type) }}
+		</div>
+		<input class="btn btn-default btn-sm border attach-file" type="file" accept="{{ accept }}" />
+		<div class="btn btn-secondary ml-2 submit-work">{{ _("Submit") }}</div>
+		<div class="preview-work hide">
+			<a target="_blank"></a>
+			<div class="assignment-status indicator-pill ml-3"></div>
+			<div class="btn btn-secondary btn-sm ml-2 clear-work">{{ _("Change") }}</div>
+		</div>
+		<div class="comments mt-3 hide">
+			<span class="subheading">
+				{{ _("Instructors Comments") }}:
+			</span>
+			<span class="comment"></span>
+		</div>
+	</div>
 </div>

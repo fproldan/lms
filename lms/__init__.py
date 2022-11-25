@@ -1,7 +1,1 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-__version__ = '0.0.1'
-
-# load the methods from the lms api
-from .lms import api # noqa
+__version__ = "0.0.1"

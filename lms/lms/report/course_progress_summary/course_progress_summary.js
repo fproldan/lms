@@ -3,12 +3,13 @@
 /* eslint-disable */
 
 frappe.query_reports["Course Progress Summary"] = {
-	"filters": [
+	filters: [
 		{
-			"fieldname": "course",
-			"label": __("Course"),
-			"fieldtype": "Link",
-			"options": "LMS Course",
-		}
-	]
+			fieldname: "course",
+			label: __("Course"),
+			fieldtype: "Link",
+			options: "LMS Course",
+			reqd: 1,
+		},
+	],
 };

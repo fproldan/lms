@@ -1,6 +1,11 @@
-{% set memberships = get_all_memberships(frappe.session.user) %}
-{% set membership = get_filtered_membership(course.name, memberships) %}
+{% if frappe.session.user != "Guest" %}
+{% set membership = frappe.db.get_value("LMS Batch Membership",
+	{"member": frappe.session.user, "course": course.name},
+	["name", "course", "batch", "current_lesson", "member_type", "progress"], as_dict=1) %}
 {% set progress = frappe.utils.cint(membership.progress) %}
+{% else %}
+{% set membership, progress = None, None %}
+{% endif %}
 
 
 <div class="common-card-style course-card" data-course="{{ course.name }}">
@@ -68,7 +73,7 @@
         </div>
         <div class="course-card-title">{{ course.title }}</div>
 
-        {% if membership and not read_only %}
+        {% if membership and not is_instructor(course.name) and not read_only %}
         <div class="progress">
             <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}"
             aria-valuemin="0" aria-valuemax="100" style="width:{{ progress }}%">
@@ -109,19 +114,17 @@
 
         {% if read_only %}
             <a class="stretched-link" href="/courses/{{ course.name }}"></a>
-            {% else %}
-
-            {% set lesson_index = get_lesson_index(membership.current_lesson) if membership and
-            membership.current_lesson else '1.1' %}
-            {% set query_parameter = "?batch=" + membership.batch if membership and
-            membership.batch else "" %}
-
+		{% else %}
             {% if progress != 100 and membership and not course.upcoming %}
-            <a class="stretched-link" href="{{ get_lesson_url(course.name, lesson_index) }}{{ query_parameter }}"></a>
 
-            {% else %}
-            <a class="stretched-link" href="/courses/{{ course.name }}"></a>
+				{% set lesson_index = get_lesson_index(membership.current_lesson or "1.1") %}
 
+				{% set query_parameter = "?batch=" + membership.batch if membership.batch else "" %}
+
+				<a class="stretched-link" href="{{ get_lesson_url(course.name, lesson_index) }}{{ query_parameter }}"></a>
+
+			{% else %}
+				<a class="stretched-link" href="/courses/{{ course.name }}"></a>
             {% endif %}
         {% endif %}
     </div>

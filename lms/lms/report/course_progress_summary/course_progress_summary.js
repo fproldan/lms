@@ -9,7 +9,6 @@ frappe.query_reports["Course Progress Summary"] = {
 			label: __("Course"),
 			fieldtype: "Link",
 			options: "LMS Course",
-			reqd: 1,
 		},
 	],
 };

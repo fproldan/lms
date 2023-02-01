@@ -147,7 +147,7 @@ def get_enrolled_courses():
 			],
 			as_dict=True,
 		)
-		if not course.published:
+		if not course or not course['published']:
 			continue
 		progress = cint(membership.progress)
 		if progress < 100:

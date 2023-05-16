@@ -14,9 +14,9 @@
                     {{ CourseHeaderOverlay(course) }}
                     {{ Description(course) }}
                     {{ widgets.CourseOutline(course=course, membership=membership, is_user_interested=is_user_interested) }}
-                    {% if course.status == "Approved" and not frappe.utils.cint(course.upcoming) %}
+                    <!--{% if course.status == "Approved" and not frappe.utils.cint(course.upcoming) %}
                     {% include "lms/templates/reviews.html" %}
-                    {% endif %}
+                    {% endif %}-->
                 </div>
             </div>
         </div>

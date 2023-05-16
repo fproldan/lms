@@ -34,7 +34,7 @@ lms.patches.v0_0.create_course_instructor_role #29-08-2022
 lms.patches.v0_0.create_course_moderator_role
 lms.patches.v0_0.set_dashboard #11-10-2022
 lms.patches.v0_0.set_courses_page_as_home
-lms.patches.v0_0.set_member_in_progress #09-11-2022
+lms.patches.v0_0.set_member_in_progress #03-03-2023
 lms.patches.v0_0.convert_progress_to_float
 lms.patches.v0_0.add_pages_to_nav #25-11-2022
 lms.patches.v0_0.change_role_names
@@ -46,3 +46,11 @@ lms.patches.v0_0.check_onboarding_status #21-12-2022
 lms.patches.v0_0.assignment_file_type
 lms.patches.v0_0.user_singles_issue #23-11-2022
 lms.patches.v0_0.rename_community_to_users #06-01-2023
+lms.patches.v0_0.video_embed_link
+lms.patches.v0_0.rename_exercise_doctype
+lms.patches.v0_0.add_question_type #09-04-2023
+lms.patches.v0_0.add_evaluator_to_assignment #09-04-2023
+lms.patches.v0_0.share_certificates
+execute:frappe.delete_doc("Web Form", "class", ignore_missing=True, force=True)
+lms.patches.v0_0.amend_course_and_lesson_editor_fields
+lms.patches.v0_0.convert_course_description_to_html #11-05-2023

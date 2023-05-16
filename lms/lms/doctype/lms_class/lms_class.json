@@ -11,9 +11,13 @@
   "title",
   "start_date",
   "end_date",
+  "paid_class",
   "column_break_4",
-  "description",
+  "seat_count",
+  "start_time",
+  "end_time",
   "section_break_6",
+  "description",
   "students",
   "courses",
   "custom_component"
@@ -29,6 +33,7 @@
   {
    "fieldname": "end_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "End Date",
    "reqd": 1
   },
@@ -60,6 +65,7 @@
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "Start Date",
    "reqd": 1
   },
@@ -69,11 +75,32 @@
    "fieldtype": "Code",
    "label": "Custom Component",
    "options": "HTML"
+  },
+  {
+   "default": "0",
+   "fieldname": "paid_class",
+   "fieldtype": "Check",
+   "label": "Paid Class"
+  },
+  {
+   "fieldname": "seat_count",
+   "fieldtype": "Int",
+   "label": "Seat Count"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Time",
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Time",
+   "label": "End Time"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-25 10:37:24.250557",
+ "modified": "2023-05-03 23:07:06.725720",
  "modified_by": "Administrator",
  "module": "LMS",
  "name": "LMS Class",
@@ -107,5 +134,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "title"
 }

@@ -5,13 +5,14 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_years, nowdate
-from frappe.utils.pdf import get_pdf
-
 from lms.lms.utils import is_certified
 
 
 class LMSCertificate(Document):
-	def before_insert(self):
+	def validate(self):
+		self.validate_duplicate_certificate()
+
+	def validate_duplicate_certificate(self):
 		certificates = frappe.get_all(
 			"LMS Certificate", {"member": self.member, "course": self.course}
 		)
@@ -21,6 +22,18 @@ class LMSCertificate(Document):
 			frappe.throw(
 				_("{0} is already certified for the course {1}").format(full_name, course_name)
 			)
+
+	def after_insert(self):
+		share = frappe.get_doc(
+			{
+				"doctype": "DocShare",
+				"read": 1,
+				"share_doctype": "LMS Certificate",
+				"share_name": self.name,
+				"user": self.member,
+			}
+		)
+		share.save(ignore_permissions=True)
 
 
 @frappe.whitelist()
@@ -47,10 +60,3 @@ def create_certificate(course):
 		)
 		certificate.save(ignore_permissions=True)
 		return certificate
-
-
-@frappe.whitelist()
-def get_certificate_pdf(html):
-	frappe.local.response.filename = "certificate.pdf"
-	frappe.local.response.filecontent = get_pdf(html, {"orientation": "LandScape"})
-	frappe.local.response.type = "pdf"

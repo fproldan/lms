@@ -60,7 +60,7 @@ web_include_js = ["website.bundle.js"]
 # before_install = "lms.install.before_install"
 after_install = "lms.install.after_install"
 after_sync = "lms.install.after_sync"
-after_uninstall = "lms.install.after_uninstall"
+before_uninstall = "lms.install.before_uninstall"
 
 
 setup_wizard_requires = "assets/lms/js/setup_wizard.js"
@@ -138,11 +138,17 @@ fixtures = ["Custom Field", "Function", "Industry"]
 website_route_rules = [
 	{"from_route": "/sketches/<sketch>", "to_route": "sketches/sketch"},
 	{"from_route": "/courses/<course>", "to_route": "courses/course"},
+	{"from_route": "/courses/<course>/edit", "to_route": "courses/create"},
+	{"from_route": "/courses/<course>/outline", "to_route": "courses/outline"},
 	{"from_route": "/courses/<course>/<certificate>", "to_route": "courses/certificate"},
 	{"from_route": "/courses/<course>/learn", "to_route": "batch/learn"},
 	{
 		"from_route": "/courses/<course>/learn/<int:chapter>.<int:lesson>",
 		"to_route": "batch/learn",
+	},
+	{
+		"from_route": "/courses/<course>/learn/<int:chapter>.<int:lesson>/edit",
+		"to_route": "batch/edit",
 	},
 	{"from_route": "/quizzes", "to_route": "batch/quiz_list"},
 	{"from_route": "/quizzes/<quizname>", "to_route": "batch/quiz"},

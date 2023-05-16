@@ -1,5 +1,6 @@
 frappe.ready(() => {
 	setup_file_size();
+	pin_header();
 
 	$(".join-batch").click((e) => {
 		join_course(e);
@@ -7,14 +8,6 @@ frappe.ready(() => {
 
 	$(".notify-me").click((e) => {
 		notify_user(e);
-	});
-
-	$(".btn-chapter").click((e) => {
-		add_chapter(e);
-	});
-
-	$(document).on("click", ".btn-save-chapter", (e) => {
-		save_chapter(e);
 	});
 
 	$(".nav-link").click((e) => {
@@ -31,7 +24,35 @@ frappe.ready(() => {
 		generate_graph("Lesson Completion", "#lesson-completion");
 		generate_course_completion_graph();
 	}
+
+	expand_the_active_chapter();
+
+	$(".chapter-title")
+		.unbind()
+		.click((e) => {
+			rotate_chapter_icon(e);
+		});
+
+	$(".no-preview").click((e) => {
+		show_no_preview_dialog(e);
+	});
+
+	$("#create-class").click((e) => {
+		open_class_dialog(e);
+	});
 });
+
+const pin_header = () => {
+	const el = document.querySelector(".sticky");
+	if (el) {
+		const observer = new IntersectionObserver(
+			([e]) =>
+				e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
+			{ threshold: [1] }
+		);
+		observer.observe(el);
+	}
+};
 
 const setup_file_size = () => {
 	frappe.provide("frappe.form.formatters");
@@ -49,7 +70,7 @@ const file_size = (value) => {
 
 const join_course = (e) => {
 	e.preventDefault();
-	let course = $(e.currentTarget).attr("data-course");
+	let course = $("#outline-heading").attr("data-course");
 	if (frappe.session.user == "Guest") {
 		window.location.href = `/login?redirect-to=/courses/${course}`;
 		return;
@@ -83,7 +104,7 @@ const join_course = (e) => {
 
 const notify_user = (e) => {
 	e.preventDefault();
-	var course = decodeURIComponent($(e.currentTarget).attr("data-course"));
+	var course = decodeURIComponent($("#outline-heading").attr("data-course"));
 	if (frappe.session.user == "Guest") {
 		window.location.href = `/login?redirect-to=/courses/${course}`;
 		return;
@@ -108,65 +129,6 @@ const notify_user = (e) => {
 			setTimeout(() => {
 				window.location.reload();
 			}, 3000);
-		},
-	});
-};
-
-const add_chapter = (e) => {
-	if ($(".new-chapter").length) {
-		scroll_to_chapter_container();
-		return;
-	}
-
-	let next_index = $("[data-index]").last().data("index") + 1 || 1;
-	let add_after = $(`.chapter-parent:last`).length
-		? $(`.chapter-parent:last`)
-		: $("#outline-heading");
-
-	$(`<div class="chapter-parent chapter-edit new-chapter">
-        <div contenteditable="true" data-placeholder="${__(
-			"Chapter Name"
-		)}" class="chapter-title-main"></div>
-        <div class="chapter-description small my-2" contenteditable="true"
-            data-placeholder="${__("Short Description")}"></div>
-        <button class="btn btn-sm btn-secondary d-block btn-save-chapter"
-        data-index="${next_index}"> ${__("Save")} </button>
-        </div>`).insertAfter(add_after);
-
-	scroll_to_chapter_container();
-};
-
-const scroll_to_chapter_container = () => {
-	$([document.documentElement, document.body]).animate(
-		{
-			scrollTop: $(".new-chapter").offset().top,
-		},
-		1000
-	);
-	$(".new-chapter").find(".chapter-title-main").focus();
-};
-
-const save_chapter = (e) => {
-	let target = $(e.currentTarget);
-	let parent = target.closest(".chapter-parent");
-
-	frappe.call({
-		method: "lms.lms.doctype.lms_course.lms_course.save_chapter",
-		args: {
-			course: $("#title").data("course"),
-			title: parent.find(".chapter-title-main").text(),
-			chapter_description: parent.find(".chapter-description").text(),
-			idx: target.data("index"),
-			chapter: target.data("chapter") ? target.data("chapter") : "",
-		},
-		callback: (data) => {
-			frappe.show_alert({
-				message: __("Saved"),
-				indicator: "green",
-			});
-			setTimeout(() => {
-				window.location.reload();
-			}, 1000);
 		},
 	});
 };
@@ -225,4 +187,165 @@ const change_hash = (e) => {
 
 const open_tab = () => {
 	$(`a[href="${window.location.hash}"]`).click();
+};
+
+const expand_the_first_chapter = () => {
+	let elements = $(".course-home-outline .collapse");
+	elements.each((i, element) => {
+		if (i < 1) {
+			show_section(element);
+			return false;
+		}
+	});
+};
+
+const expand_the_active_chapter = () => {
+	/* Find anchor matching the URL for course details page */
+	let selector = $(
+		`a[href="${decodeURIComponent(window.location.pathname)}"]`
+	).parent();
+
+	if (!selector.length) {
+		selector = $(
+			`a[href^="${decodeURIComponent(window.location.pathname)}"]`
+		).parent();
+	}
+	if (selector.length && $(".course-details-page").length) {
+		expand_for_course_details(selector);
+	} else if ($(".active-lesson").length) {
+		/* For course home page */
+		selector = $(".active-lesson");
+		show_section(selector.parent().parent());
+	} else {
+		/* If no active chapter then exapand the first chapter */
+		expand_the_first_chapter();
+	}
+};
+
+const expand_for_course_details = (selector) => {
+	$(".lesson-info").removeClass("active-lesson");
+	$(".lesson-info").each((i, elem) => {
+		let href = $(elem).find("use").attr("href");
+		href.endsWith("blue") &&
+			$(elem)
+				.find("use")
+				.attr("href", href.substring(0, href.length - 5));
+	});
+	selector.addClass("active-lesson");
+
+	show_section(selector.parent().parent());
+};
+
+const show_section = (element) => {
+	$(element).addClass("show");
+	$(element)
+		.siblings(".chapter-title")
+		.children(".chapter-icon")
+		.css("transform", "rotate(90deg)");
+	$(element).siblings(".chapter-title").attr("aria-expanded", true);
+};
+
+const rotate_chapter_icon = (e) => {
+	let icon = $(e.currentTarget).children(".chapter-icon");
+	if (icon.css("transform") == "none") {
+		icon.css("transform", "rotate(90deg)");
+	} else {
+		icon.css("transform", "none");
+	}
+};
+
+const show_no_preview_dialog = (e) => {
+	$("#no-preview-modal").modal("show");
+};
+
+const open_class_dialog = (e) => {
+	this.class_dialog = new frappe.ui.Dialog({
+		title: __("New Class"),
+		fields: [
+			{
+				fieldtype: "Data",
+				label: __("Title"),
+				fieldname: "title",
+				reqd: 1,
+				default: class_info && class_info.title,
+			},
+			{
+				fieldtype: "Date",
+				label: __("Start Date"),
+				fieldname: "start_date",
+				reqd: 1,
+				default: class_info && class_info.start_date,
+			},
+			{
+				fieldtype: "Date",
+				label: __("End Date"),
+				fieldname: "end_date",
+				reqd: 1,
+				default: class_info && class_info.end_date,
+			},
+			{
+				fieldtype: "Column Break",
+			},
+			{
+				fieldtype: "Int",
+				label: __("Seat Count"),
+				fieldname: "seat_count",
+				default: class_info && class_info.seat_count,
+			},
+			{
+				fieldtype: "Time",
+				label: __("Start Time"),
+				fieldname: "start_time",
+				default: class_info && class_info.start_time,
+			},
+			{
+				fieldtype: "Time",
+				label: __("End Time"),
+				fieldname: "end_time",
+				default: class_info && class_info.end_time,
+			},
+			{
+				fieldtype: "Section Break",
+			},
+			{
+				fieldtype: "Small Text",
+				label: __("Description"),
+				fieldname: "description",
+				default: class_info && class_info.description,
+			},
+		],
+		primary_action_label: __("Save"),
+		primary_action: (values) => {
+			create_class(values);
+		},
+	});
+	this.class_dialog.show();
+};
+
+const create_class = (values) => {
+	frappe.call({
+		method: "lms.lms.doctype.lms_class.lms_class.create_class",
+		args: {
+			title: values.title,
+			start_date: values.start_date,
+			end_date: values.end_date,
+			description: values.description,
+			seat_count: values.seat_count,
+			start_time: values.start_time,
+			end_time: values.end_time,
+			name: class_info && class_info.name,
+		},
+		callback: (r) => {
+			if (r.message) {
+				frappe.show_alert({
+					message: class_info
+						? __("Class Updated")
+						: __("Class Created"),
+					indicator: "green",
+				});
+				this.class_dialog.hide();
+				window.location.href = `/classes/${r.message.name}`;
+			}
+		},
+	});
 };

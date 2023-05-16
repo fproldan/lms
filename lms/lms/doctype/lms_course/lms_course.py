@@ -2,19 +2,19 @@
 # For license information, please see license.txt
 
 import json
-
+import random
 import frappe
 from frappe.model.document import Document
 from frappe.utils import cint
-
+from frappe.utils.telemetry import capture
 from lms.lms.utils import get_chapters
-
 from ...utils import generate_slug, validate_image
 
 
 class LMSCourse(Document):
 	def validate(self):
 		self.validate_instructors()
+		self.validate_video_link()
 		self.validate_status()
 		self.image = validate_image(self.image)
 
@@ -30,6 +30,10 @@ class LMSCourse(Document):
 				}
 			).save(ignore_permissions=True)
 
+	def validate_video_link(self):
+		if self.video_link and "/" in self.video_link:
+			self.video_link = self.video_link.split("/")[-1]
+
 	def validate_status(self):
 		if self.published:
 			self.status = "Approved"
@@ -37,6 +41,9 @@ class LMSCourse(Document):
 	def on_update(self):
 		if not self.upcoming and self.has_value_changed("upcoming"):
 			self.send_email_to_interested_users()
+
+	def after_insert(self):
+		capture("course_created", "lms")
 
 	def send_email_to_interested_users(self):
 		interested_users = frappe.get_all(
@@ -67,7 +74,10 @@ class LMSCourse(Document):
 
 	def autoname(self):
 		if not self.name:
-			self.name = generate_slug(self.title, "LMS Course")
+			title = self.title
+			if self.title == "New Course":
+				title = self.title + str(random.randint(0, 99))
+			self.name = generate_slug(title, "LMS Course")
 
 	def __repr__(self):
 		return f"<Course#{self.name}>"
@@ -301,3 +311,43 @@ def save_lesson(
 	lesson_reference.save(ignore_permissions=True)
 
 	return doc.name
+
+
+@frappe.whitelist()
+def reorder_lesson(old_chapter, old_lesson_array, new_chapter, new_lesson_array):
+	if old_chapter == new_chapter:
+		sort_lessons(new_chapter, new_lesson_array)
+	else:
+		sort_lessons(old_chapter, old_lesson_array)
+		sort_lessons(new_chapter, new_lesson_array)
+
+
+def sort_lessons(chapter, lesson_array):
+	lesson_array = json.loads(lesson_array)
+	for les in lesson_array:
+		ref = frappe.get_all("Lesson Reference", {"lesson": les}, ["name", "idx"])
+		if ref:
+			frappe.db.set_value(
+				"Lesson Reference",
+				ref[0].name,
+				{
+					"parent": chapter,
+					"idx": lesson_array.index(les) + 1,
+				},
+			)
+
+
+@frappe.whitelist()
+def reorder_chapter(chapter_array):
+	chapter_array = json.loads(chapter_array)
+
+	for chap in chapter_array:
+		ref = frappe.get_all("Chapter Reference", {"chapter": chap}, ["name", "idx"])
+		if ref:
+			frappe.db.set_value(
+				"Chapter Reference",
+				ref[0].name,
+				{
+					"idx": chapter_array.index(chap) + 1,
+				},
+			)

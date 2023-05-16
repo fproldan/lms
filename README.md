@@ -52,7 +52,7 @@ These are some of the tools it's built on:
 You need Docker, docker-compose, and git setup on your machine. Refer to [Docker documentation](https://docs.docker.com/). After that, run the following commands:
 ```
 git clone https://github.com/frappe/lms
-cd lms/docker
+cd apps/lms/docker
 docker-compose up
 ```
 
@@ -71,7 +71,7 @@ Currently, this app depends on the `develop` branch of [frappe](https://github.c
     bench --site lms.test install-app lms
     bench --site lms.test add-to-hosts
 
- 1. Now, you can access the site at `http://gameplan.test:8080`
+ 1. Now, you can access the site at `http://lms.test:8000`
 
 
 ## Deployment

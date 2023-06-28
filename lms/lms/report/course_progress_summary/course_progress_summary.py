@@ -35,6 +35,7 @@ def get_data(filters=None):
 					"course_name": frappe.db.get_value("LMS Course", membership.course, "title"),
 					"member": membership.member,
 					"member_name": membership.member_name,
+					"company": frappe.db.get_value("User", membership.member, "profession"),
 					"progress": cint(membership.progress),
 				}
 			)
@@ -71,6 +72,12 @@ def get_columns():
 			"label": _("Member Name"),
 			"width": 150,
 		},
+		{
+            "fieldname": "company",
+            "fieldtype": "Data",
+            "label": _("Company"),
+            "width": 150
+        },
 		{
 			"fieldname": "progress",
 			"fieldtype": "Data",

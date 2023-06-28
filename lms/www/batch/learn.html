@@ -45,9 +45,9 @@
             <div class="lesson-parent">
                 {{ BreadCrumb(course, lesson) }}
                 {{ LessonContent(lesson) }}
-                {% if course.status == "Approved" and not course.upcoming %}
+                <!--{% if course.status == "Approved" and not course.upcoming %}
                 {{ Discussions() }}
-                {% endif %}
+                {% endif %}-->
             </div>
         </div>
     </div>
@@ -136,11 +136,9 @@
             {{ render_html(lesson) }}
 
         {% else %}
-            {% set course_link = "<a class='join-batch' data-course=" + course.name | urlencode + " href=''>" + _('here') +  "</a>" %}
+            {% set course_link = "<a class='join-batch' data-course=" + course.name | urlencode + " href=''>" + _('aquí') +  "</a>" %}
             <div class="alert alert-info medium mb-0">
-                {{ _("There is no preview available for this lesson.
-                Please join the course to access it.
-                Click {0} to enroll.").format(course_link) }}
+                {{ _("No hay vista previa disponible para esta lección. Por favor, inscríbase en el curso para acceder a ella. Haga clic {0} para inscribirse.").format(course_link) }}
             </div>
         {% endif %}
     </div>
@@ -224,7 +222,7 @@
 
 
 <!-- Discussions Component -->
-{% macro Discussions() %}
+<!--{% macro Discussions() %}
     {% set topics_count = frappe.db.count("Discussion Topic", {
         "reference_doctype": "Course Lesson",
         "reference_docname": lesson.name
@@ -238,7 +236,7 @@
     {% set empty_state_title = _("Have a doubt?") %}
     {% set empty_state_subtitle = _("Post it here, our mentors will help you out.") %}
     {% include "frappe/templates/discussions/discussions_section.html" %}
-{% endmacro %}
+{% endmacro %}-->
 
 
 <!-- Scripts -->

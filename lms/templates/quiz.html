@@ -29,8 +29,7 @@
 		{% if quiz.max_attempts %}
 		{% set suffix = "times" if quiz.max_attempts > 1 else "time" %}
 		<div class="alert alert-info medium">
-			{{ _("This quiz can only be taken {0} {1}. If you attempt the quiz but leave the page before submitting,
-			the quiz will be automatically submitted.").format(quiz.max_attempts, suffix) }}
+			{{ _("This quiz can only be taken {0} {1}. If you attempt the quiz but leave the page before submitting, the quiz will be automatically submitted.").format(quiz.max_attempts, suffix) }}
 		</div>
 		{% endif %}
 
@@ -71,7 +70,6 @@
 						<div class="option-text">{{ frappe.utils.md_to_html(option) }}</div>
 						</label>
 					</div>
-
 				{% set explanation = question['explanation_' + loop.index | string] %}
 				{% if explanation %}
 					<small class="explanation ml-10 hide">{{ explanation }}</small>
@@ -93,7 +91,7 @@
 		</div>
 
 		<div class="quiz-footer">
-			<span class="font-weight-bold"> <span class="current-question">1</span> of {{ quiz.questions | length }}</span>
+			<span class="font-weight-bold"> <span class="current-question">1</span> {{_("of")}} {{ quiz.questions | length }}</span>
 
 			{% if quiz.time %}
 			<div class="progress timer w-75" data-time="{{ quiz.time }}">

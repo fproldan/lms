@@ -173,7 +173,7 @@ const quiz_summary = (e = undefined) => {
 				.parent()
 				.prepend(
 					`<div class="summary">
-                    <div class="font-weight-bold"> ${__("Score")}: ${
+                    <div class="font-weight-bold"> ${__("Puntaje")}: ${
 						data.message
 					}/${total_questions} </div>
                 </div>`
@@ -223,6 +223,10 @@ const parse_options = () => {
 };
 
 const is_answer_correct = (type, element) => {
+	if (frappe.session.user==="Guest") {
+		frappe.msgprint("Iniciar sesión para realizar el cuestionario.")
+		return
+	}
 	let answer = decodeURIComponent($(element).val());
 
 	frappe.call({

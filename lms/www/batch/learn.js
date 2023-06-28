@@ -173,7 +173,7 @@ const quiz_summary = (e = undefined) => {
 				.parent()
 				.prepend(
 					`<div class="summary">
-                    <div class="font-weight-bold"> ${__("Score")}: ${
+                    <div class="font-weight-bold"> ${__("Puntaje")}: ${
 						data.message
 					}/${total_questions} </div>
                 </div>`

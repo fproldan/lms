@@ -70,7 +70,7 @@
 						<div class="option-text">{{ frappe.utils.md_to_html(option) }}</div>
 						</label>
 					</div>
-
+s
 				{% set explanation = question['explanation_' + loop.index | string] %}
 				{% if explanation %}
 					<small class="explanation ml-10 hide">{{ explanation }}</small>
@@ -92,7 +92,7 @@
 		</div>
 
 		<div class="quiz-footer">
-			<span class="font-weight-bold"> <span class="current-question">1</span> of {{ quiz.questions | length }}</span>
+			<span class="font-weight-bold"> <span class="current-question">1</span> _("of") {{ quiz.questions | length }}</span>
 
 			{% if quiz.time %}
 			<div class="progress timer w-75" data-time="{{ quiz.time }}">

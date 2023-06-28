@@ -29,8 +29,7 @@
 		{% if quiz.max_attempts %}
 		{% set suffix = "times" if quiz.max_attempts > 1 else "time" %}
 		<div class="alert alert-info medium">
-			{{ _("This quiz can only be taken {0} {1}. If you attempt the quiz but leave the page before submitting,
-			the quiz will be automatically submitted.").format(quiz.max_attempts, suffix) }}
+			{{ _("This quiz can only be taken {0} {1}. If you attempt the quiz but leave the page before submitting, the quiz will be automatically submitted.").format(quiz.max_attempts, suffix) }}
 		</div>
 		{% endif %}
 

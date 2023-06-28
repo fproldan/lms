@@ -70,7 +70,6 @@
 						<div class="option-text">{{ frappe.utils.md_to_html(option) }}</div>
 						</label>
 					</div>
-s
 				{% set explanation = question['explanation_' + loop.index | string] %}
 				{% if explanation %}
 					<small class="explanation ml-10 hide">{{ explanation }}</small>

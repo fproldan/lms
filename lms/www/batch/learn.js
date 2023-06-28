@@ -223,6 +223,10 @@ const parse_options = () => {
 };
 
 const is_answer_correct = (type, element) => {
+	if (frappe.session.user==="Guest") {
+		frappe.msgprint("Iniciar sesión para realizar el cuestionario.")
+		return
+	}
 	let answer = decodeURIComponent($(element).val());
 
 	frappe.call({
